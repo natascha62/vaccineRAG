@@ -1,0 +1,184 @@
+# Main experiment configuration. Freeze this file (and commit it) before the
+# pre-registered experiment starts; every run stores a copy of the merged config.
+# Override files (e.g. pilot.yaml, sensitivity/*.yaml) are merged on top:
+#   vaxrag run --config configs/default.yaml --config configs/pilot.yaml --run-id pilot
+
+paths:
+  questions_dir: MCQ_dataset            # put the raw xlsx files here
+  guidelines_raw: data/guidelines/raw   # put the guideline PDFs here
+  manifest: data/guidelines/manifest.csv
+
+questions:
+  files:
+    S1: "[final]English_MCQ_S1_labeled.xlsx"
+    S2: "[final]English_MCQ_S2_labeled.xlsx"
+  multi_answer_subsets: [S2]            # S2: the model must select all correct options
+  release_date: "2026-02-14"            # first public release: Zenodo v1, doi:10.5281/zenodo.18637915
+
+chunking:
+  tokenizer: cl100k_base
+  min_tokens: 400
+  max_tokens: 800
+  overlap_ratio: 0.10
+  table_max_tokens: 1200
+
+retrieval:
+  query_mode: stem_and_options          # sensitivity: stem_only
+  use_bm25: true
+  use_dense: true
+  use_reranker: true
+  bm25_candidates: 30
+  dense_candidates: 30
+  rrf_k: 60
+  top_k: 5
+  rerank_field: retrieval_text
+  embedder:
+    name: bge-m3
+    model_id: BAAI/bge-m3
+    batch_size: 16
+    max_length: 1024
+    device: auto                        # cuda > mps > cpu
+  reranker:
+    model_id: BAAI/bge-reranker-v2-m3
+    batch_size: 16
+    max_length: 1024
+    device: auto
+
+# Model endpoints.
+# Contamination control by design: every evaluated model must have a training-data
+# cutoff before the question bank's first public release (questions.release_date);
+# `vaxrag` refuses to run otherwise. Use pinned snapshot IDs, never "-latest" aliases.
+# Verify prices on the official pricing pages before running.
+# temperature: null = parameter not sent (provider default; record it in the methods).
+models:
+  claude:
+    provider: anthropic
+    model_id: claude-opus-4-6           # pinned snapshot; retirement not before 2027-02-05
+    temperature: 0.0                    # accepted by Claude 4.6 (rejected from 4.7 on)
+    reasoning_effort: null              # no thinking: the `thinking` parameter is omitted
+    max_output_tokens: 4096
+    price_input_per_mtok: 5.0
+    price_output_per_mtok: 25.0
+    price_cache_read_per_mtok: 0.50     # prompt-cache read (A3 documents)
+    price_cache_write_per_mtok: 6.25    # 5-minute cache write
+    supports_vision: true
+    supports_pdf: true
+    release_date: "2026-02-05"
+    training_data_cutoff: "2025-08"
+    cutoff_source: "platform.claude.com/docs/en/models/opus-4-6/overview (training data cutoff)"
+  gpt:
+    provider: openai
+    model_id: gpt-5.2-2025-12-11        # pinned snapshot of gpt-5.2
+    temperature: null                   # TODO: check in the pilot whether temperature is accepted
+    reasoning_effort: none              # lowest level (also the default for gpt-5.2)
+    max_output_tokens: 4096
+    price_input_per_mtok: 1.75
+    price_output_per_mtok: 14.0
+    price_cache_read_per_mtok: 0.175    # cached input (automatic prefix caching)
+    supports_vision: true
+    supports_pdf: true
+    release_date: "2025-12-11"
+    training_data_cutoff: "2025-08-31"
+    cutoff_source: "developers.openai.com/api/docs/models/gpt-5.2 (knowledge cutoff)"
+  gemini:
+    provider: google
+    model_id: gemini-3.1-pro-preview    # released 2026-02-19, after the bank; allowed by cutoff
+    temperature: null                   # Google recommends the default (1.0) for Gemini 3 models
+    reasoning_effort: low               # lowest thinking_level
+    max_output_tokens: 8192
+    price_input_per_mtok: 2.0           # TODO: verify on the Gemini pricing page
+    price_output_per_mtok: 12.0
+    price_cache_read_per_mtok: 0.20     # TODO: verify (implicit caching discount)
+    supports_vision: true
+    supports_pdf: true
+    release_date: "2026-02-19"
+    training_data_cutoff: "2025-01"
+    cutoff_source: "TODO: confirm in the official Gemini 3.1 Pro model card (third-party listings and the Gemini 3 Pro docs give Jan 2025)"
+  gemma:
+    provider: vllm
+    model_id: google/gemma-3-27b-it     # bf16, unquantized (see scripts/serve_vllm.sh)
+    base_url: http://localhost:8000/v1
+    temperature: 0.0
+    max_output_tokens: 2048
+    max_workers: 16
+    release_date: "2025-03-12"
+    training_data_cutoff: "2024-08"
+    cutoff_source: "Gemma 3 model card (knowledge cutoff August 2024)"
+  medgemma:
+    provider: vllm
+    model_id: google/medgemma-27b-text-it
+    base_url: http://localhost:8000/v1
+    temperature: 0.0
+    max_output_tokens: 2048
+    max_workers: 16
+    release_date: "2025-05-20"
+    training_data_cutoff: "2025-05"
+    cutoff_source: "upper bound = release date; base model Gemma 3 (Aug 2024)"
+  # LLM judge: must not be one of the evaluated models. A model from the same
+  # vendor as an evaluated model may favour that model's answers; consider a
+  # different vendor's mid-priced model and report the choice.
+  judge:
+    provider: anthropic
+    model_id: claude-sonnet-5-5
+    temperature: null
+    reasoning_effort: low
+    max_output_tokens: 4096
+    price_input_per_mtok: 2.0
+    price_output_per_mtok: 10.0
+
+table_vision_model: claude
+
+prompt:
+  version: answer_v1
+  grounding_version: grounding_v1
+  relevance_version: chunk_relevance_v1
+  sufficiency_version: context_sufficiency_v1
+  selection_version: doc_selection_v1   # A3 document selection
+  table_vision_version: table_vision_v1
+
+experiment:
+  models: [claude, gpt, gemini, gemma, medgemma]
+  arms: [A0, A1, A2, A3]
+  question_filter:
+    subsets: [S1, S2]
+    exclude_version_status: []          # e.g. [outdated, unmappable] for the main analysis
+    only_kb_covered: false
+    sample_n: null
+    seed: 2026
+  consistency:                          # 300 questions x 3 repetitions
+    enabled: true
+    n_questions: 300
+    reps: 3
+    seed: 2026
+    arms: [A0, A1, A2]                  # A3 is run once only (cost)
+  fulldoc:                              # A3: model selects PDFs and reads them in full
+    models: [claude, gpt, gemini]       # API models with native PDF input only
+    max_docs: 3
+    cache_documents: true
+  max_workers: 4
+  max_parse_attempts: 2                 # one retry after a parse failure
+
+judge:
+  model: judge
+  arms: [A1, A2, A3]                    # grounding judge: arms whose answers are judged
+  pool_k: 10                            # chunk relevance: judge the top-10 of each retrieval run
+  judge_gold_sufficiency: true          # also judge whether annotated gold sets suffice (QC)
+  positive_relevance: [supports]        # verdicts counted as "relevant"
+  positive_sufficiency: [sufficient]    # verdicts counted as "sufficient"
+  human_sample_n: 200                   # per judgment kind
+  seed: 2026
+  max_workers: 4
+
+analysis:
+  primary_population:                   # primary analysis; all questions are reported as secondary
+    only_kb_covered: true
+    version_status: [current]
+  quote_match_threshold: 90
+  citation_title_threshold: 80
+  bootstrap_iterations: 1000
+  seed: 2026
+  reference_arm: A0
+  paired_models: [gemma, medgemma]
+  run_glmm: true
+  primary_arms: [A0, A1, A2]            # arms of the H1/H2 regressions (A3 analysed separately)
+  table_review_arms: [A1]               # wrong answers in these arms queue their tables for review

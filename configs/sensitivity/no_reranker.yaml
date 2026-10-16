@@ -1,0 +1,2 @@
+retrieval:
+  use_reranker: false

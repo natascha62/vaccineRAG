@@ -1,0 +1,2 @@
+retrieval:
+  use_bm25: false

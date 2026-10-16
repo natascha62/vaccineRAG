@@ -1,0 +1,15 @@
+# Separate serving environment for open-source models (Linux + NVIDIA GPU only).
+# vLLM pins its own torch/transformers versions, so it is kept apart from the
+# main `vaxrag` environment; the pipeline talks to it over HTTP.
+#   conda env create -f environment-vllm.yml
+#   conda activate vaxrag-vllm
+#   bash scripts/serve_vllm.sh google/gemma-3-27b-it
+name: vaxrag-vllm
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip>=24
+  - pip:
+      - vllm>=0.10
+      - huggingface_hub[cli]>=0.30

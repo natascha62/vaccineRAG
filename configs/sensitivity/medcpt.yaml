@@ -1,0 +1,6 @@
+retrieval:
+  embedder:
+    name: medcpt
+    model_id: ncbi/MedCPT-Article-Encoder
+    query_model_id: ncbi/MedCPT-Query-Encoder
+    max_length: 512

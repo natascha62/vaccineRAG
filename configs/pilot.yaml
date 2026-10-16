@@ -1,0 +1,6 @@
+# Pilot: 150 random questions, all arms and models, no repetitions.
+experiment:
+  question_filter:
+    sample_n: 150
+  consistency:
+    enabled: false

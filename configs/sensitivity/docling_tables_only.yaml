@@ -1,0 +1,6 @@
+# Tables from raw Docling output only (no multimodal overrides): point the
+# overrides folder to an empty directory and write chunks to a separate file.
+paths:
+  table_overrides_dir: data/guidelines/table_overrides_disabled
+  chunks: data/processed/chunks_docling_tables.jsonl
+  gold_chunks: data/annotations/gold_chunks_docling_tables.jsonl

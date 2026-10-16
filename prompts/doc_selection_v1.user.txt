@@ -1,0 +1,9 @@
+Document catalog:
+{{catalog}}
+
+Question: {{stem}}
+
+Options:
+{{options}}
+
+Select at most {{max_docs}} documents.

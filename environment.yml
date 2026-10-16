@@ -1,0 +1,13 @@
+# Main pipeline environment (macOS / Linux, CPU, Apple MPS, or CUDA).
+#   conda env create -f environment.yml
+#   conda activate vaxrag
+# On Linux, pip installs the CUDA build of PyTorch automatically, so the
+# embedding model and reranker use the GPU when one is available.
+name: vaxrag
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip>=24
+  - pip:
+      - -e ".[dev]"

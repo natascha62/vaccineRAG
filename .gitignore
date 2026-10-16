@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+
+# Environments and secrets
+.env
+.venv/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Question bank: VaxEval (Zenodo, doi:10.5281/zenodo.18637915, CC BY 4.0); download, do not copy here
+MCQ_dataset/
+data/processed/questions.jsonl
+data/processed/question_exclusions.csv
+# Contains question stems; remove this line if the repository stays private
+# or the question bank licence allows publication.
+data/annotations/question_annotations.csv
+data/annotations/annotators/*/question_annotations.csv
+data/annotations/consensus_draft.csv
+data/annotations/disagreements.csv
+
+# Guideline PDFs and derived artifacts (large; regenerate or share separately)
+data/guidelines/raw/*
+!data/guidelines/raw/.gitkeep
+data/guidelines/parsed/*
+!data/guidelines/parsed/.gitkeep
+data/guidelines/table_images/*
+!data/guidelines/table_images/.gitkeep
+data/processed/index/
+data/processed/retrieval/
+data/processed/*.jsonl
+
+# Experiment results (contain full prompts with questions)
+results/runs/*
+!results/runs/.gitkeep
+results/analysis/*
+!results/analysis/.gitkeep
+results/judgments/*
+!results/judgments/.gitkeep
+
+# Private working files (never publish)
+research_plan.md
+CLAUDE.md
+TODO.md
+scripts/make_public_copy.sh

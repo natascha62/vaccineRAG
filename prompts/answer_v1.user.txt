@@ -1,0 +1,7 @@
+{{context_block}}Question: {{stem}}
+
+Options:
+{{options}}
+
+{{selection_instruction}}
+{{citation_instruction}}

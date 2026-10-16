@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vaxrag"
+version = "0.1.0"
+description = "Evaluating retrieval-augmented generation over CDC/ACIP vaccine guidelines on a multiple-choice benchmark."
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    # Core data handling
+    "pydantic>=2.6",
+    "pyyaml>=6.0",
+    "pandas>=2.1",
+    "numpy>=1.26",
+    "openpyxl>=3.1",
+    "pyarrow>=14",
+    "tqdm>=4.66",
+    "python-dotenv>=1.0",
+    "tenacity>=8.2",
+    "rapidfuzz>=3.6",
+    "tiktoken>=0.7",
+    # Statistics
+    "scipy>=1.11",
+    "statsmodels>=0.14",
+    # LLM provider SDKs (open-source models are served by vLLM's OpenAI-compatible API)
+    "openai>=1.60",
+    "anthropic>=0.70",
+    "google-genai>=1.20",
+    # Document parsing and retrieval
+    "docling>=2.30",
+    "pypdfium2>=4.30",
+    "pillow>=10",
+    "rank-bm25>=0.2.2",
+    "torch>=2.4",
+    "transformers>=4.50",
+    "sentence-transformers>=3.3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.6"]
+
+[project.scripts]
+vaxrag = "vaxrag.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = ["slow: tests that download or run real models (deselect with -m 'not slow')"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "D"]
+ignore = ["D105", "D107", "D203", "D213"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D"]

@@ -1,0 +1,7 @@
+You evaluate whether quoted evidence supports an answer to a vaccine multiple-choice question.
+Judge only from the quotes and cited excerpts given to you, not from your own knowledge of what the correct answer is.
+Respond with a single JSON object with the fields "verdict" and "rationale".
+- "verdict": "supports" if the quotes, read in the cited excerpts, clearly support the selected answer;
+  "partial" if they are relevant but do not fully establish it; "not_supports" if they are irrelevant,
+  contradict the answer, or are absent.
+- "rationale": at most 40 words.

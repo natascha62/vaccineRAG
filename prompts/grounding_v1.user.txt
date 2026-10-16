@@ -1,0 +1,9 @@
+Question: {{stem}}
+
+Options:
+{{options}}
+
+Selected answer: {{selected}}
+
+Quotes given by the answering model, with the excerpts they cite:
+{{evidence}}

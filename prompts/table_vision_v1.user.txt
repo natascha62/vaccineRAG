@@ -1,0 +1,18 @@
+Convert every table on this page into Markdown.
+
+Output format, repeated for each table:
+TABLE: <table title or caption, verbatim>
+| header 1 | header 2 | ... |
+| --- | --- | ... |
+| cell | cell | ... |
+FOOTNOTES:
+- <each footnote, note or legend entry belonging to the table, verbatim>
+
+Rules:
+- One Markdown row per table row. For merged cells, repeat the value in every cell it spans.
+- If colour coding carries meaning, write the meaning of the colour in the cell text in square brackets,
+  e.g. "[recommended age range]", and explain the legend in FOOTNOTES.
+- Keep footnote markers (*, †, a, b, ...) in the cells.
+- Output only the tables in the format above, nothing else.
+
+Notes about this page: {{notes}}

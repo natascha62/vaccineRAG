@@ -1,0 +1,10 @@
+Question: {{stem}}
+
+Options:
+{{options}}
+
+Correct answer ({{answer_mode}}):
+{{correct}}
+
+Passages:
+{{passages}}

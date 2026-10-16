@@ -1,0 +1,29 @@
+# Instruction snippets for prompt version answer_v1.
+# Any change here requires a new prompt version (copy all answer_v1.* files to answer_v2.*).
+single_instruction: >-
+  Select exactly one option: the single best answer.
+multi_instruction: >-
+  Select ALL options that are correct. One or more options may be correct;
+  list every correct option and no incorrect ones.
+context_header: >-
+  Reference material (excerpts from vaccine guidelines). If the reference material
+  is relevant, base your answer on it.
+context_citation_instruction: >-
+  In "references", cite the excerpts that support your answer by their ID (e.g. "S2")
+  and copy a short verbatim quote from that excerpt. Set "answer_basis" to
+  "provided_context" if your answer is based on the reference material, or
+  "own_knowledge" if the reference material was insufficient and you used your own knowledge.
+no_context_citation_instruction: >-
+  No reference material is provided. In "references", cite from memory the guideline
+  documents that support your answer: put the guideline title and section in "source_id"
+  (for example "ACIP General Best Practice Guidelines › Timing and Spacing") and the
+  supporting statement in "quote". Set "answer_basis" to "own_knowledge".
+fulldoc_context_header: >-
+  Reference material: the attached PDF documents, which you selected from the guideline
+  catalog. They are listed below in the order they are attached. If the reference material
+  is relevant, base your answer on it.
+fulldoc_citation_instruction: >-
+  In "references", cite the documents that support your answer by their ID (e.g. "D2")
+  and copy a short verbatim quote from that document. Set "answer_basis" to
+  "provided_context" if your answer is based on the documents, or "own_knowledge" if they
+  were insufficient and you used your own knowledge.

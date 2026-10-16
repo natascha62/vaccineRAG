@@ -1,0 +1,2 @@
+retrieval:
+  query_mode: stem_only
